@@ -1,0 +1,2 @@
+<ul class="nav nav-tabs mb-3">{% for ep, label in [('admin.index','Overview'),('admin.sources','Sources'),('admin.articles','News'),('admin.categories','Categories'),('admin.questions','Questions'),('admin.content','Subjects and study material'),('admin.tests','Mock tests'),('admin.logs','Logs')] %}
+<li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == ep }}" href="{{ url_for(ep) }}">{{ label }}</a></li>{% endfor %}</ul>

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% block title %}Mock Tests{% endblock %}
+{% block content %}<h1 class="h2 mb-3">Mock tests</h1>
+<ul class="nav nav-pills mb-3">{% for k, label in [('', 'All'), ('full', 'Full-length'), ('subject', 'Subject-wise'), ('topic', 'Topic-wise'), ('pyq', 'Previous year')] %}
+ <li class="nav-item"><a class="nav-link {{ 'active' if kind == k }}" href="{{ url_for('tests.index', kind=k) }}">{{ label }}</a></li>{% endfor %}</ul>
+<div class="row g-3">{% for t in tests %}<div class="col-md-6"><div class="card p-3 h-100">
+ <div class="meta">{{ t.kind|capitalize }} · {{ t.exam_type }}</div><h2 class="h5">{{ t.title }}</h2>
+ <div class="meta mb-2">{{ t.items|length }} questions · {{ t.duration_min }} min · +{{ t.mark_per_question }} / −{{ t.negative_mark }} per wrong answer{% if t.id in best %} · Best: {{ best[t.id] }}%{% endif %}</div>
+ <form method="post" action="{{ url_for('tests.start', tid=t.id) }}"><button class="btn btn-primary">Start or resume test</button></form></div></div>
+{% else %}<div class="col"><div class="card p-4">No tests yet. An administrator can create them under Admin &gt; Tests, or start a timed test from any subject or topic page.</div></div>{% endfor %}</div>
+{% if recent %}<h2 class="h5 mt-4">Your recent attempts</h2><div class="card"><table class="table mb-0"><tbody>
+{% for r in recent %}<tr><td>{{ r.test.title }}</td><td>{{ r.submitted_at|ist }}</td><td>{{ r.score }}/{{ r.max_score }} ({{ r.percentage }}%)</td><td><a href="{{ url_for('tests.result', rid=r.id) }}">Analysis</a></td></tr>{% endfor %}</tbody></table></div>{% endif %}
+{% endblock %}

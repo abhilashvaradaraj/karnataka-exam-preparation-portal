@@ -1,0 +1,13 @@
+{% extends 'base.html' %}{% block title %}Study material{% endblock %}
+{% block content %}<h1 class="h2">Subjects and study material</h1>{% include 'admin/_nav.html' %}
+<div class="row g-3 mb-4"><div class="col-lg-4"><form method="post" class="card p-3"><input type="hidden" name="kind" value="subject"><h2 class="h6">Add subject</h2>
+ <input class="form-control mb-2" name="name" placeholder="Subject name" required><input class="form-control mb-2" name="description" placeholder="Short description"><button class="btn btn-primary">Add subject</button></form></div>
+ <div class="col-lg-8"><form method="post" class="card p-3"><input type="hidden" name="kind" value="topic"><h2 class="h6">Add topic or subtopic</h2>
+  <div class="row g-2 mb-2"><div class="col-md-4"><select class="form-select" name="subject" required><option value="">Subject...</option>{% for s in subjects %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}</select></div>
+   <div class="col-md-4"><select class="form-select" name="parent"><option value="">Top-level topic</option>{% for t in topics %}<option value="{{ t.id }}">Subtopic of: {{ t.title }}</option>{% endfor %}</select></div>
+   <div class="col-md-4"><input class="form-control" name="title" placeholder="Title" required></div></div>
+  <textarea class="form-control mb-2" name="content" rows="5" placeholder="Study material (one paragraph per line)" required></textarea>
+  <textarea class="form-control mb-2" name="key_facts" rows="3" placeholder="Important facts, one per line"></textarea>
+  <input class="form-control mb-2" name="exam_relevance" placeholder="Exam relevance, e.g. FDA/SDA General Studies"><button class="btn btn-primary">Add topic</button></form></div></div>
+<div class="card table-responsive"><table class="table table-sm mb-0"><tbody>{% for s in subjects %}{% for t in s.topics %}<tr><td>{{ s.name }}</td><td>{{ '↳ ' if t.parent_id }}{{ t.title }}</td>
+ <td><form method="post" action="{{ url_for('admin.topic_delete', tid=t.id) }}" onsubmit="return confirm('Delete this topic?')"><button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>{% endfor %}{% endfor %}</tbody></table></div>{% endblock %}

@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% block title %}Subject-wise Preparation{% endblock %}
+{% block content %}<h1 class="h2 mb-3">Subject-wise preparation</h1>
+<div class="row g-3">{% for s in subjects %}
+ <div class="col-md-6 col-xl-4"><a class="card p-3 h-100 text-decoration-none text-reset" href="{{ url_for('subjects.subject', sid=s.id) }}">
+  <h2 class="h5">{{ s.name }}</h2><div class="meta mb-2">{{ s.description }}</div>
+  <div class="meta">{{ s.topics|length }} topic(s) · {{ qcount.get(s.id, 0) }} question(s)</div></a></div>
+{% endfor %}</div>{% endblock %}

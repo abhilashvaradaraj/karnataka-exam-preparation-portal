@@ -1,0 +1,4 @@
+<div class="card table-responsive"><table class="table table-sm mb-0 align-middle"><thead><tr><th>Time (IST)</th><th>Source</th><th>Status</th><th>New</th><th>Trigger</th><th>Message</th></tr></thead><tbody>
+{% for l in logs %}<tr><td>{{ l.run_at|ist }}</td><td>{{ l.source_name }}</td>
+<td><span class="badge text-bg-{{ {'ok':'success','error':'danger','run':'primary'}[l.status] }}">{{ l.status }}</span></td><td>{{ l.added }}</td><td>{{ l.trigger }}</td><td>{{ l.message }}</td></tr>
+{% else %}<tr><td colspan="6" class="p-3">No fetches yet.</td></tr>{% endfor %}</tbody></table></div>

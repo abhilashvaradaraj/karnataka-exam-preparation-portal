@@ -1,0 +1,20 @@
+{% extends 'base.html' %}{% from '_macros.html' import pager %}{% block title %}Daily Current Affairs{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+ <h1 class="h2 mb-0">Daily current affairs</h1>
+ {% if current_user.is_authenticated %}<form method="post" action="{{ url_for('main.refresh') }}"><button class="btn btn-accent">Refresh news</button></form>{% endif %}
+</div>
+<form class="card p-3 mb-3 row g-2 mx-0" method="get">
+ <div class="col-md-4"><input class="form-control" name="q" value="{{ term }}" placeholder="Search headlines and summaries" aria-label="Search"></div>
+ <div class="col-md-3"><select class="form-select" name="category" aria-label="Category"><option value="">All categories</option>
+  {% for c in cats %}<option value="{{ c.id }}" {{ 'selected' if cat == c.id }}>{{ c.name }}</option>{% endfor %}</select></div>
+ <div class="col-md-3"><input class="form-control" type="date" name="date" value="{{ date }}" aria-label="Published on"></div>
+ <div class="col-md-2 d-flex gap-2"><button class="btn btn-primary flex-fill">Filter</button><a class="btn btn-outline-secondary" href="{{ url_for('main.news') }}">Clear</a></div>
+ <div class="meta">The date filter uses the publisher’s publication date (IST), not the time we fetched the article.</div>
+</form>
+<div class="card">
+ {% for a in pag.items %}{% include '_article.html' %}
+ {% else %}<div class="p-4">No articles match. Clear the filters, or fetch fresh news with <b>Refresh news</b>.</div>{% endfor %}
+</div>
+<div class="mt-3">{{ pager(pag, 'main.news', q=term, category=cat, date=date) }}</div>
+{% endblock %}

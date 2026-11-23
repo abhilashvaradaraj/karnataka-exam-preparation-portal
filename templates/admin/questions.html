@@ -1,0 +1,23 @@
+{% extends 'base.html' %}{% from '_macros.html' import pager %}{% block title %}Questions{% endblock %}
+{% block content %}<h1 class="h2">Questions</h1>{% include 'admin/_nav.html' %}
+<details class="card p-3 mb-3"><summary class="fw-semibold">Add a question</summary>
+<form method="post" class="mt-3">
+ <textarea class="form-control mb-2" name="text" rows="2" placeholder="Question text" required></textarea>
+ {% for i in range(4) %}<div class="row g-2 mb-2"><div class="col-md-1 d-flex align-items-center"><input type="radio" class="form-check-input me-1" name="correct" value="{{ i }}" required aria-label="Option {{ 'ABCD'[i] }} is correct"> <b>{{ 'ABCD'[i] }}</b></div>
+  <div class="col-md-4"><input class="form-control" name="opt{{ i }}" placeholder="Option {{ 'ABCD'[i] }}" required></div><div class="col-md-7"><input class="form-control" name="exp{{ i }}" placeholder="Why option {{ 'ABCD'[i] }} is right or wrong" required></div></div>{% endfor %}
+ <div class="row g-2 mb-2">
+  <div class="col-md-3"><select class="form-select" name="subject"><option value="">Subject...</option>{% for s in subjects %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><select class="form-select" name="topic"><option value="">Topic (optional)</option>{% for t in topics %}<option value="{{ t.id }}">{{ t.subject.name }}: {{ t.title }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><select class="form-select" name="category"><option value="">Current-affairs category...</option>{% for c in cats %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><select class="form-select" name="difficulty" required><option>Easy</option><option selected>Medium</option><option>Hard</option></select></div>
+  <div class="col-md-3"><input class="form-control" type="number" name="year" min="1990" max="2100" placeholder="Year (previous-year only)"></div>
+  <div class="col-md-3"><input class="form-control" name="exam_tag" placeholder="e.g. FDA 2019 (only if genuine)"></div></div>
+ <button class="btn btn-primary">Save question</button></form></details>
+<div class="mb-2 d-flex gap-2"><a class="btn btn-sm btn-outline-secondary {{ 'active' if not status }}" href="{{ url_for('admin.questions') }}">All</a><a class="btn btn-sm btn-outline-secondary {{ 'active' if status == 'pending' }}" href="{{ url_for('admin.questions', status='pending') }}">Pending review</a></div>
+<div class="card table-responsive"><table class="table table-sm mb-0 align-middle"><tbody>
+{% for q in pag.items %}<tr><td><div>{{ q.text }}</div><div class="meta">{{ q.difficulty }} · {{ q.subject.name if q.subject else (q.news_category.name if q.news_category else '-') }} · {{ q.origin }}{% if q.article %} · <a href="{{ q.article.link }}" target="_blank" rel="noopener noreferrer">source article</a>{% endif %}
+ <br>Answer: {{ q.correct.label ~ '. ' ~ q.correct.text if q.correct }}</div></td>
+ <td class="text-nowrap"><form class="d-inline" method="post" action="{{ url_for('admin.question_action', qid=q.id, action='unapprove' if q.is_approved else 'approve') }}"><button class="btn btn-sm btn-outline-{{ 'secondary' if q.is_approved else 'success' }}">{{ 'Unapprove' if q.is_approved else 'Approve' }}</button></form>
+ <form class="d-inline" method="post" action="{{ url_for('admin.question_action', qid=q.id, action='delete') }}" onsubmit="return confirm('Delete this question?')"><button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>
+{% else %}<tr><td class="p-3">No questions.</td></tr>{% endfor %}</tbody></table></div>
+<div class="mt-3">{{ pager(pag, 'admin.questions', status=status) }}</div>{% endblock %}

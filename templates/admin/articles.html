@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% from '_macros.html' import pager %}{% block title %}Fetched news{% endblock %}
+{% block content %}<h1 class="h2">Fetched news</h1>{% include 'admin/_nav.html' %}
+<form class="mb-3 d-flex gap-2"><input class="form-control" name="q" value="{{ term }}" placeholder="Search titles"><button class="btn btn-primary">Search</button></form>
+<div class="card table-responsive"><table class="table table-sm mb-0 align-middle"><thead><tr><th>Article</th><th>Category</th><th></th></tr></thead><tbody>
+{% for a in pag.items %}<tr><td><a href="{{ a.link }}" target="_blank" rel="noopener noreferrer">{{ a.title }}</a><div class="meta">{{ a.publisher }} · published {{ a.published_at|ist }} · fetched {{ a.fetched_at|ist }}</div></td>
+ <td><form method="post" action="{{ url_for('admin.article_action', aid=a.id, action='category') }}" class="d-flex gap-1"><select class="form-select form-select-sm" name="category">{% for c in cats %}<option value="{{ c.id }}" {{ 'selected' if a.category_id == c.id }}>{{ c.name }}</option>{% endfor %}</select><button class="btn btn-sm btn-outline-secondary">Save</button></form></td>
+ <td><form method="post" action="{{ url_for('admin.article_action', aid=a.id, action='delete') }}" onsubmit="return confirm('Delete this article?')"><button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>
+{% else %}<tr><td colspan="3" class="p-3">No articles.</td></tr>{% endfor %}</tbody></table></div>
+<div class="mt-3">{{ pager(pag, 'admin.articles', q=term) }}</div>{% endblock %}

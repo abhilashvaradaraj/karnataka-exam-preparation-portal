@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% block title %}{{ s.name }}{% endblock %}
+{% block content %}
+<a href="{{ url_for('subjects.index') }}" class="meta">All subjects</a>
+<h1 class="h2">{{ s.name }}</h1><p class="meta">{{ s.description }}</p>
+<div class="d-flex flex-wrap gap-2 mb-4">
+ <a class="btn btn-accent" href="{{ url_for('quiz.take', cat='s:' ~ s.id, n=20) }}">Practice MCQs ({{ qn }})</a>
+ {% if current_user.is_authenticated %}<form method="post" action="{{ url_for('subjects.subject_test', sid=s.id) }}"><button class="btn btn-primary">Timed subject test</button></form>{% endif %}
+ {% if pyq %}<span class="align-self-center meta">{{ pyq }} previous-year question(s) included</span>{% endif %}
+</div>
+<div class="card">{% for t in top %}
+ <div class="p-3 border-bottom"><a class="h5 text-decoration-none" href="{{ url_for('subjects.topic', tid=t.id) }}">{{ t.title }}</a>
+  {% if t.exam_relevance %}<div class="meta">{{ t.exam_relevance }}</div>{% endif %}
+  {% for sub in t.subtopics %}<div class="ms-3"><a href="{{ url_for('subjects.topic', tid=sub.id) }}">{{ sub.title }}</a></div>{% endfor %}</div>
+{% else %}<div class="p-4">No topics yet.</div>{% endfor %}</div>
+{% if tests %}<h2 class="h5 mt-4">Mock tests that include this subject</h2>
+<ul>{% for t in tests %}<li><a href="{{ url_for('tests.index') }}">{{ t.title }}</a></li>{% endfor %}</ul>{% endif %}
+{% endblock %}

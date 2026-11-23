@@ -1,0 +1,10 @@
+{# expects: q (Question), sel (selected option id or None) #}
+<div class="qtext mb-2">{{ q.text }}</div>
+{% for o in q.options %}
+ <div class="opt {{ 'right' if o.is_correct else ('wrong' if sel == o.id) }}"><b>{{ o.label }}.</b> {{ o.text }}
+  {% if o.is_correct %}<span class="badge text-bg-success ms-1">Correct answer</span>{% endif %}
+  {% if sel == o.id %}<span class="badge text-bg-secondary ms-1">Your answer</span>{% endif %}</div>
+ <div class="why">{{ o.explanation }}</div>
+{% endfor %}
+{% if not sel %}<div class="meta mb-2">You did not answer this question.</div>{% endif %}
+{% if q.article %}<div class="meta">Based on: <a href="{{ q.article.link }}" target="_blank" rel="noopener noreferrer">{{ q.article.title }}</a> ({{ q.article.publisher }})</div>{% endif %}

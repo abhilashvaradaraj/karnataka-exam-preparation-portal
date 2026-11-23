@@ -1,0 +1,15 @@
+<article class="news-item">
+ <div class="d-flex flex-wrap gap-2 align-items-center">
+  {% if a.category %}<span class="badge badge-cat">{{ a.category.name }}</span>{% endif %}
+  <span class="meta">{{ a.publisher }}</span>
+  <span class="meta">Published {{ a.published_at|ist }} IST</span>
+  <span class="meta">Fetched {{ a.fetched_at|ist('%d %b, %I:%M %p') }}</span>
+ </div>
+ <h3><a class="title" href="{{ a.link }}" target="_blank" rel="noopener noreferrer">{{ a.title }}</a></h3>
+ <p class="mb-1">{{ a.explanation }}{% if a.explanation_origin == 'title' %} <span class="meta">(No summary supplied by the publisher.)</span>{% endif %}</p>
+ {% if a.key_facts %}<div class="facts"><b>Points to note for exams</b>{% for l in a.key_facts|lines %}<div>{{ l }}</div>{% endfor %}</div>{% endif %}
+ <div class="mt-2 d-flex gap-2">
+  <a class="btn btn-sm btn-outline-secondary" href="{{ a.link }}" target="_blank" rel="noopener noreferrer">Read original at {{ a.publisher }}</a>
+  {% if current_user.is_authenticated %}<button class="btn btn-sm btn-outline-secondary" data-bookmark="{{ url_for('main.bookmark_article', aid=a.id) }}">{{ 'Saved' if a.id in marked else 'Save' }}</button>{% endif %}
+ </div>
+</article>

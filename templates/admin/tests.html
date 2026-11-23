@@ -1,0 +1,21 @@
+{% extends 'base.html' %}{% block title %}Mock tests{% endblock %}
+{% block content %}<h1 class="h2">Mock tests</h1>{% include 'admin/_nav.html' %}
+<form method="post" class="card p-3 mb-3"><h2 class="h6">Create a test (questions are drawn at random from approved ones that match)</h2>
+ <div class="row g-2">
+  <div class="col-md-5"><input class="form-control" name="title" placeholder="Test title" required></div>
+  <div class="col-md-2"><select class="form-select" name="kind"><option value="full">Full-length</option><option value="subject">Subject-wise</option><option value="topic">Topic-wise</option><option value="pyq">Previous year</option></select></div>
+  <div class="col-md-2"><select class="form-select" name="exam_type" id="exam">{% for k in profiles %}<option>{{ k }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><input class="form-control" type="number" name="count" min="1" max="200" value="20" aria-label="Number of questions"></div>
+  <div class="col-md-2"><label class="form-label small mb-0">Minutes</label><input class="form-control" type="number" name="duration" min="1" max="300" value="60"></div>
+  <div class="col-md-2"><label class="form-label small mb-0">Marks / question</label><input class="form-control" name="mark" value="1"></div>
+  <div class="col-md-2"><label class="form-label small mb-0">Negative marks</label><input class="form-control" name="negative" value="0.25"></div>
+  <div class="col-md-3"><label class="form-label small mb-0">Subject</label><select class="form-select" name="subject"><option value="">Any</option>{% for s in subjects %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><label class="form-label small mb-0">Topic</label><select class="form-select" name="topic"><option value="">Any</option>{% for t in topics %}<option value="{{ t.id }}">{{ t.title }}</option>{% endfor %}</select></div></div>
+ <div class="meta my-2">Negative marking differs by exam. Check the official notification and set the value you need. “Previous year” tests only use questions that have a year recorded.</div>
+ <button class="btn btn-primary">Create test</button></form>
+<div class="card table-responsive"><table class="table table-sm mb-0 align-middle"><tbody>
+{% for t in tests %}<tr><td><b>{{ t.title }}</b><div class="meta">{{ t.kind }} · {{ t.exam_type }} · {{ t.items|length }} questions · {{ t.duration_min }} min · −{{ t.negative_mark }}</div></td>
+ <td class="text-nowrap"><form class="d-inline" method="post" action="{{ url_for('admin.test_action', tid=t.id, action='toggle') }}"><button class="btn btn-sm btn-outline-secondary">{{ 'Hide' if t.is_active else 'Show' }}</button></form>
+ <form class="d-inline" method="post" action="{{ url_for('admin.test_action', tid=t.id, action='delete') }}" onsubmit="return confirm('Delete this test?')"><button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>
+{% else %}<tr><td class="p-3">No tests yet.</td></tr>{% endfor %}</tbody></table></div>
+<script>var P={{ profiles|tojson }};document.getElementById('exam').addEventListener('change',function(e){var p=P[e.target.value];if(!p)return;var f=e.target.form;f.duration.value=p.duration;f.mark.value=p.mark;f.negative.value=p.negative});</script>{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}{% block title %}Test result{% endblock %}
+{% block content %}
+<h1 class="h2">{{ t.title }}</h1>
+<div class="row g-3 mb-4">
+ <div class="col-6 col-md-3"><div class="card stat"><b>{{ r.score }} / {{ r.max_score }}</b><span>score</span></div></div>
+ <div class="col-6 col-md-3"><div class="card stat"><b>{{ r.percentage }}%</b><span>percentage</span></div></div>
+ <div class="col-6 col-md-3"><div class="card stat"><b>{{ (r.time_taken_sec // 60) }}m {{ r.time_taken_sec % 60 }}s</b><span>time taken of {{ t.duration_min }} min</span></div></div>
+ <div class="col-6 col-md-3"><div class="card stat"><b>{{ r.correct }} / {{ r.wrong }} / {{ r.unattempted }}</b><span>correct / wrong / unattempted</span></div></div>
+</div>
+<div class="row g-4 mb-4"><div class="col-md-4"><div class="card p-3"><canvas id="pie" height="220"></canvas></div></div>
+ <div class="col-md-8"><div class="card p-3"><h2 class="h6">Subject-wise accuracy</h2><table class="table table-sm mb-0"><tbody>
+ {% for name, d in by_subject.items() %}<tr><td>{{ name }}</td><td>{{ d.correct }} / {{ d.total }}</td><td>{{ (d.correct * 100 / d.total)|round(0)|int }}%</td></tr>{% endfor %}</tbody></table>
+ <div class="meta mt-2">Marking: +{{ t.mark_per_question }} per correct, −{{ t.negative_mark }} per wrong answer.</div></div></div></div>
+{% for a in answers %}<div class="card p-3 mb-3"><div class="mb-1"><b>Question {{ loop.index }}</b>
+ {% if a.is_correct %}<span class="badge text-bg-success">Correct +{{ t.mark_per_question }}</span>{% elif a.selected_option_id %}<span class="badge text-bg-danger">Wrong −{{ t.negative_mark }}</span>{% else %}<span class="badge text-bg-secondary">Unattempted</span>{% endif %}</div>
+ {% with q=a.question, sel=a.selected_option_id %}{% include '_review.html' %}{% endwith %}</div>{% endfor %}
+<a class="btn btn-primary" href="{{ url_for('tests.index') }}">Back to mock tests</a>
+{% endblock %}
+{% block scripts %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>new Chart(document.getElementById('pie'),{type:'doughnut',data:{labels:['Correct','Wrong','Unattempted'],datasets:[{data:[{{ r.correct }},{{ r.wrong }},{{ r.unattempted }}],backgroundColor:['#1f7a4d','#b3261e','#9aa5c0']}]}});</script>{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end mb-3 gap-2">
+ <div><h1 class="h2 mb-0">{{ 'Hello, ' ~ current_user.name if current_user.is_authenticated else 'Today’s preparation' }}</h1>
+  <div class="meta">News is refreshed daily at 6:00 AM IST. Next scheduled run: {{ next_run }}.
+   {% if last_run %}Last run: {{ last_run.run_at|ist }} IST - {{ last_run.message }}.{% else %}No news run has completed yet.{% endif %}</div></div>
+ {% if current_user.is_authenticated %}<form method="post" action="{{ url_for('main.refresh') }}"><button class="btn btn-outline-secondary">Refresh news</button></form>{% endif %}
+</div>
+<div class="row g-3 mb-4">
+ <div class="col-6 col-lg-3"><div class="card stat"><b>{{ stats.today }}</b><span>articles in the last 24 hours</span></div></div>
+ <div class="col-6 col-lg-3"><div class="card stat"><b>{{ stats.articles }}</b><span>articles stored</span></div></div>
+ <div class="col-6 col-lg-3"><div class="card stat"><b>{{ stats.questions }}</b><span>approved questions</span></div></div>
+ <div class="col-6 col-lg-3"><div class="card stat"><b>{{ stats.my_attempts if current_user.is_authenticated else stats.tests }}</b><span>{{ 'your attempts' if current_user.is_authenticated else 'mock tests' }}</span></div></div>
+</div>
+<div class="row g-4">
+ <div class="col-lg-8">
+  <div class="card">
+   <div class="d-flex justify-content-between align-items-center p-3 border-bottom"><h2 class="h5 mb-0">{{ 'Today’s current affairs' if fresh else 'Latest current affairs' }}</h2><a href="{{ url_for('main.news') }}">All news</a></div>
+   {% for a in todays %}{% set marked = [] %}{% include '_article.html' %}
+   {% else %}<div class="p-4">No articles yet. {% if current_user.is_authenticated %}Press <b>Refresh news</b> to fetch the latest, or check Admin &gt; Logs if feeds are failing.{% else %}<a href="{{ url_for('auth.login') }}">Log in</a> and press Refresh news to fetch the latest.{% endif %}</div>{% endfor %}
+  </div>
+ </div>
+ <div class="col-lg-4">
+  <div class="card p-3 mb-3"><h2 class="h5">Daily quiz</h2>
+   <p class="meta mb-2">{{ stats.questions }} approved questions available. Default set: 20 questions, avoiding ones you answered this week.</p>
+   <a class="btn btn-accent" href="{{ url_for('quiz.take', n=20) }}">Start today’s quiz</a></div>
+  <div class="card p-3"><h2 class="h5">Your recent scores</h2>
+   {% if chart %}<canvas id="progress" height="200"></canvas>
+   {% else %}<p class="meta mb-0">{% if current_user.is_authenticated %}Take a quiz or mock test and your percentage trend appears here.{% else %}Log in to track your quiz and test scores.{% endif %}</p>{% endif %}</div>
+ </div>
+</div>
+{% endblock %}
+{% block scripts %}{% if chart %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>new Chart(document.getElementById('progress'),{type:'line',data:{labels:{{ chart.labels|tojson }},datasets:[{label:'Percentage',data:{{ chart.values|tojson }},borderColor:'#e3a008',backgroundColor:'#e3a008',tension:.25}]},options:{scales:{y:{min:0,max:100}},plugins:{legend:{display:false}}}});</script>
+{% endif %}{% endblock %}

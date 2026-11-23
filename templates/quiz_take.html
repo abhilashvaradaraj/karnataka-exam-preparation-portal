@@ -1,0 +1,15 @@
+{% extends 'base.html' %}{% block title %}Quiz{% endblock %}
+{% block content %}
+<h1 class="h2">{{ label }}{% if diff %} - {{ diff }}{% endif %}</h1>
+<p class="meta">{{ questions|length }} question(s). Answers and explanations appear after you submit.</p>
+<form method="post" action="{{ url_for('quiz.submit') }}">
+ <input type="hidden" name="label" value="{{ label }}"><input type="hidden" name="diff" value="{{ diff }}">
+ {% for q in questions %}
+ <div class="card p-3 mb-3"><input type="hidden" name="qid" value="{{ q.id }}">
+  <div class="meta mb-1">Question {{ loop.index }} · {{ q.difficulty }}{% if q.subject %} · {{ q.subject.name }}{% elif q.news_category %} · {{ q.news_category.name }}{% endif %}{% if q.exam_tag %} · {{ q.exam_tag }}{% endif %}</div>
+  <div class="qtext mb-2">{{ q.text }}</div>
+  {% for o in q.options %}<label class="opt"><input type="radio" name="q_{{ q.id }}" value="{{ o.id }}"> <b>{{ o.label }}.</b> {{ o.text }}</label>{% endfor %}
+ </div>{% endfor %}
+ <button class="btn btn-accent btn-lg">Submit quiz</button>
+</form>
+{% endblock %}

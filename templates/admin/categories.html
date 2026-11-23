@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% block title %}Categories{% endblock %}
+{% block content %}<h1 class="h2">Categories</h1>{% include 'admin/_nav.html' %}
+<p class="meta">Keywords (comma separated, lower case) decide how new articles are categorised. The category with the most keyword matches wins; otherwise the source’s default is used.</p>
+{% for c in cats %}<form method="post" class="card p-2 mb-2 row g-2 mx-0"><input type="hidden" name="id" value="{{ c.id }}">
+ <div class="col-md-3"><input class="form-control" name="name" value="{{ c.name }}"></div><div class="col-md-7"><input class="form-control" name="keywords" value="{{ c.keywords }}"></div><div class="col-md-2"><button class="btn btn-primary w-100">Save</button></div></form>{% endfor %}
+<form method="post" class="card p-2 row g-2 mx-0"><div class="col-md-3"><input class="form-control" name="name" placeholder="New category" required></div><div class="col-md-7"><input class="form-control" name="keywords" placeholder="keywords"></div><div class="col-md-2"><button class="btn btn-accent w-100">Add</button></div></form>
+{% endblock %}

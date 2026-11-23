@@ -1,0 +1,4 @@
+{% extends 'base.html' %}{% from '_macros.html' import pager %}{% block title %}Logs{% endblock %}
+{% block content %}<h1 class="h2">Fetch logs</h1>{% include 'admin/_nav.html' %}
+<div class="mb-3 d-flex gap-2">{% for s, l in [('', 'All'), ('error', 'Errors'), ('ok', 'Successful'), ('run', 'Runs')] %}<a class="btn btn-sm btn-outline-secondary {{ 'active' if status == s }}" href="{{ url_for('admin.logs', status=s) }}">{{ l }}</a>{% endfor %}</div>
+{% set logs = pag.items %}{% include 'admin/_logtable.html' %}<div class="mt-3">{{ pager(pag, 'admin.logs', status=status) }}</div>{% endblock %}

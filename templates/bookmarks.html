@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block title %}Saved articles{% endblock %}
+{% block content %}<h1 class="h2 mb-3">Saved articles</h1>
+<div class="card">{% set marked = items|map(attribute='article_id')|list %}
+{% for b in items %}{% set a = b.article %}{% include '_article.html' %}
+{% else %}<div class="p-4">Nothing saved yet. Use <b>Save</b> on any article in <a href="{{ url_for('main.news') }}">Daily current affairs</a>.</div>{% endfor %}</div>
+{% endblock %}

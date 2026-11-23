@@ -1,0 +1,20 @@
+{% extends 'base.html' %}{% block title %}Daily MCQ Practice{% endblock %}
+{% block content %}
+<h1 class="h2 mb-3">Daily MCQ practice</h1>
+<div class="row g-4"><div class="col-lg-7">
+<form class="card p-4" method="get" action="{{ url_for('quiz.take') }}">
+ <p class="meta">{{ available }} approved questions are in the bank. You get a fresh set each day; questions you answered in the past 7 days are skipped when enough others exist.</p>
+ <label class="form-label">Category</label>
+ <select class="form-select mb-3" name="cat"><option value="all">All categories</option>
+  <optgroup label="Subjects">{% for s in subjects %}<option value="s:{{ s.id }}">{{ s.name }}</option>{% endfor %}</optgroup>
+  <optgroup label="Current affairs">{% for c in cats %}<option value="c:{{ c.id }}">{{ c.name }}</option>{% endfor %}</optgroup></select>
+ <label class="form-label">Difficulty</label>
+ <select class="form-select mb-3" name="diff"><option value="">Any</option>{% for d in diffs %}<option>{{ d }}</option>{% endfor %}</select>
+ <label class="form-label">Number of questions (5-50)</label>
+ <input class="form-control mb-3" type="number" name="n" min="5" max="50" value="20">
+ <button class="btn btn-accent">Start quiz</button>
+</form></div>
+<div class="col-lg-5"><div class="card p-3"><div class="d-flex justify-content-between"><h2 class="h5">Recent quizzes</h2><a href="{{ url_for('quiz.history') }}">All</a></div>
+ {% for a in attempts %}<a class="d-flex justify-content-between py-2 border-top text-decoration-none" href="{{ url_for('quiz.result', aid=a.id) }}"><span>{{ a.label }}<br><span class="meta">{{ a.created_at|ist }}</span></span><b>{{ a.correct }}/{{ a.total }} ({{ a.percentage }}%)</b></a>
+ {% else %}<p class="meta mb-0">No quizzes yet.</p>{% endfor %}</div></div></div>
+{% endblock %}

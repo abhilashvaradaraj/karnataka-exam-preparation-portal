@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% block title %}Admin{% endblock %}
+{% block content %}<h1 class="h2">Admin panel</h1>{% include 'admin/_nav.html' %}
+<div class="row g-3 mb-4">{% for k, v in stats.items() %}<div class="col-6 col-md-2"><div class="card stat"><b>{{ v }}</b><span>{{ k }}</span></div></div>{% endfor %}</div>
+<div class="card p-3 mb-4"><div class="d-flex flex-wrap gap-2 align-items-center">
+ <form method="post" action="{{ url_for('admin.refresh') }}"><button class="btn btn-accent" {{ 'disabled' if running }}>{{ 'Refresh running...' if running else 'Fetch news now' }}</button></form>
+ <form method="post" action="{{ url_for('admin.gen_questions') }}"><button class="btn btn-outline-secondary" {{ '' if ai else 'disabled' }}>Generate MCQs from news (AI)</button></form>
+ <span class="meta">Next scheduled run: {{ next_run }}. {% if not ai %}AI is off (no ANTHROPIC_API_KEY); news collection does not need it.{% endif %}</span></div></div>
+<h2 class="h5">Latest activity</h2>{% include 'admin/_logtable.html' %}
+{% endblock %}
